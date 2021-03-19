@@ -1,6 +1,7 @@
 namespace SpriteKind {
     export const Boss = SpriteKind.create()
     export const Bar = SpriteKind.create()
+    export const Bad_projectile = SpriteKind.create()
 }
 function Set_up () {
     info.setLife(20)
@@ -23,10 +24,32 @@ function Set_up () {
         . . . . . f f f f f f . . . . . 
         . . . . . f f . . f f . . . . . 
         `, SpriteKind.Player)
+    Boss_life_bar = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        f . . . . . . . . . . . . . . . 
+        `, SpriteKind.Bar)
     controller.moveSprite(Player_1)
+    controller.moveSprite(Boss_life_bar)
     tiles.setTilemap(tilemap`level1`)
     scene.cameraFollowSprite(Player_1)
     tiles.placeOnTile(Player_1, tiles.getTileLocation(8, 15))
+    Boss_life_bar.setPosition(Player_1.x, Player_1.y)
+    Boss_life_bar.x += 60
+    Boss_life_bar.y += -50
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     Player_shot = sprites.create(img`
@@ -57,9 +80,11 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, othe
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Boss, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
-    pause(3000)
+    pause(1000)
 })
+let Boss_shot: Sprite = null
 let Player_shot: Sprite = null
+let Boss_life_bar: Sprite = null
 let Boss_life = 0
 let Boss_1: Sprite = null
 let Player_1: Sprite = null
@@ -103,6 +128,32 @@ Boss_1.follow(Player_1, 40)
 forever(function () {
     if (Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.hazardLava1) || Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.hazardLava0)) {
         info.changeLifeBy(-1)
-        pause(1000)
+        pause(500)
     }
+    Boss_life_bar.say(Boss_life, 500)
+})
+forever(function () {
+    pause(1000)
+    Boss_shot = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . f 2 f . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Bad_projectile)
+    Boss_shot.setPosition(Boss_1.x, Boss_1.y)
+    Boss_shot.follow(Player_1, 200)
+    pause(400)
+    Boss_shot.destroy(effects.fire, 500)
 })
