@@ -52,14 +52,54 @@ function Set_up () {
     Boss_life_bar.y += -50
     Boss_life_bar.setStayInScreen(true)
 }
+function Boss_attack_2 () {
+	
+}
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, otherSprite) {
     Boss_life += -1
     Player_shot.destroy(effects.coolRadial, 500)
+})
+function Boss_attack_1 () {
+    Attack_happening = 1
+    for (let index = 0; index < 10; index++) {
+        Boss_shot = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Bad_projectile)
+        Boss_shot.setPosition(Boss_1.x, Boss_1.y)
+        Boss_shot.setVelocity(10 * randint(-100, 100), 10 * randint(-100, 100))
+        pause(50)
+        Boss_shot.destroy(effects.fire, 500)
+    }
+    Attack_happening = 0
+}
+sprites.onCreated(SpriteKind.Bad_projectile, function (sprite) {
+    Projectile_bad_exists = 1
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Bad_projectile, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
     pause(1000)
 })
+sprites.onDestroyed(SpriteKind.Bad_projectile, function (sprite) {
+    Projectile_bad_exists = 0
+})
+function Boss_attack_3 () {
+	
+}
 sprites.onCreated(SpriteKind.Projectile, function (sprite) {
     Projectile_exists = 1
 })
@@ -70,13 +110,17 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Boss, function (sprite, otherSpr
     info.changeLifeBy(-1)
     pause(1000)
 })
+let Random_number_1 = 0
 let Player_y_for_aim = 0
 let Player_x_for_aim = 0
-let Boss_shot: Sprite = null
 let Projectile_exists = 0
+let Projectile_bad_exists = 0
+let Boss_shot: Sprite = null
+let Attack_happening = 0
 let Player_shot: Sprite = null
 let Boss_life_bar: Sprite = null
 let Boss_life = 0
+let Boss_1: Sprite = null
 let Player_1: Sprite = null
 Set_up()
 while (!(Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.collectibleInsignia))) {
@@ -84,7 +128,7 @@ while (!(Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.collectibleIn
 }
 scene.cameraShake(8, 3000)
 pause(3000)
-let Boss_1 = sprites.create(img`
+Boss_1 = sprites.create(img`
     ........................
     ........................
     ........................
@@ -117,6 +161,11 @@ pause(1000)
 Boss_1.follow(Player_1, 40)
 forever(function () {
     if (controller.A.isPressed() && Projectile_exists == 0) {
+    	
+    }
+})
+forever(function () {
+    if (controller.A.isPressed() && Projectile_exists == 0) {
         Player_shot = sprites.create(img`
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -136,8 +185,10 @@ forever(function () {
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Projectile)
         Player_shot.setPosition(Player_1.x, Player_1.y)
-        Player_shot.follow(Boss_1, 200)
-        pause(200)
+        Player_shot.setVelocity(5 * (Boss_1.x - Player_1.x), 5 * (Boss_1.y - Player_1.y))
+        pause(100)
+        Player_shot.destroy(effects.coolRadial, 500)
+        pause(100)
     }
 })
 forever(function () {
@@ -170,15 +221,22 @@ forever(function () {
     Boss_shot.setPosition(Boss_1.x, Boss_1.y)
     Player_x_for_aim = Player_1.x
     Player_y_for_aim = Player_1.y
-    if (Boss_1.x < Player_x_for_aim && Boss_1.y < Player_y_for_aim) {
-        Boss_shot.setVelocity(Boss_1.x + Player_x_for_aim, Boss_1.y + Player_y_for_aim)
-    } else if (Boss_1.x < Player_x_for_aim && Boss_1.y > Player_y_for_aim) {
-        Boss_shot.setVelocity(Boss_1.x + Player_x_for_aim, Boss_1.y - Player_y_for_aim)
-    } else if (Boss_1.x > Player_x_for_aim && Boss_1.y < Player_y_for_aim) {
-        Boss_shot.setVelocity(Boss_1.x - Player_x_for_aim, Boss_1.y + Player_y_for_aim)
-    } else {
-        Boss_shot.setVelocity(Boss_1.x - Player_x_for_aim, Boss_1.y - Player_y_for_aim)
+    if (Attack_happening == 0) {
+        Boss_shot.setVelocity(10 * (Player_x_for_aim - Boss_1.x), 10 * (Player_y_for_aim - Boss_1.y))
+        pause(100)
+        Boss_shot.destroy(effects.fire, 500)
     }
-    pause(100)
-    Boss_shot.destroy(effects.fire, 500)
+})
+forever(function () {
+    pause(1000)
+    if (randint(1, 2) == 1) {
+        Random_number_1 = randint(1, 3)
+        if (Random_number_1 == 1) {
+            Boss_attack_1()
+        } else if (Random_number_1 == 2) {
+            Boss_attack_2()
+        } else {
+            Boss_attack_3()
+        }
+    }
 })
