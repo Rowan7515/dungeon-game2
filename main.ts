@@ -209,15 +209,41 @@ forever(function () {
     Boss_life_bar.setPosition(Player_1.x + 60, Player_1.y - 50)
 })
 forever(function () {
-	
+    if (Attack_happening == 0) {
+        Boss_shot = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . f . . . . . . . . 
+            . . . . . . f 2 f . . . . . . . 
+            . . . . . . . f . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Bad_projectile)
+        Boss_shot.setPosition(Boss_1.x, Boss_1.y)
+        Player_x_for_aim = Player_1.x
+        Player_y_for_aim = Player_1.y
+        Boss_shot.setVelocity(10 * (Player_x_for_aim - Boss_1.x), 10 * (Player_y_for_aim - Boss_1.y))
+        pause(100)
+        Boss_shot.destroy(effects.fire, 500)
+    }
+    pause(1000)
 })
 forever(function () {
     pause(1000)
-    if (true) {
-        Random_number_1 = randint(1, 3)
-        if (Random_number_1 == 1) {
+    if (randint(1, 5) == 1) {
+        Random_number_1 = randint(1, 5)
+        if (Random_number_1 == 1 || Random_number_1 == 2) {
             Boss_attack_1()
-        } else if (Random_number_1 == 2) {
+        } else if (Random_number_1 == 3 || Random_number_1 == 4) {
             Boss_attack_2()
         } else {
             Boss_attack_3()
