@@ -54,6 +54,7 @@ function Set_up () {
 }
 function Boss_attack_2 () {
     Attack_happening = 1
+    Boss_1.say("2", 200)
     Boss_1.setVelocity(0, 20)
     pause(200)
     Player_x_for_aim = Player_1.x
@@ -69,6 +70,7 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, othe
 })
 function Boss_attack_1 () {
     Attack_happening = 1
+    Boss_1.say("1", 200)
     for (let index = 0; index < 10; index++) {
         Boss_shot = sprites.create(img`
             . . . . . . . . . . . . . . . . 
@@ -98,6 +100,10 @@ function Boss_attack_1 () {
 sprites.onCreated(SpriteKind.Bad_projectile, function (sprite) {
     Projectile_bad_exists = 1
 })
+sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
+    info.changeLifeBy(-1)
+    pause(500)
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Bad_projectile, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
     pause(1000)
@@ -106,11 +112,103 @@ sprites.onDestroyed(SpriteKind.Bad_projectile, function (sprite) {
     Projectile_bad_exists = 0
 })
 function Boss_attack_3 () {
-    Attack_happening = 1
-    for (let index = 0; index < 2; index++) {
-    	
-    }
-    Attack_happening = 0
+    Boss_1.say("3", 200)
+    Boss_Minion = sprites.create(img`
+        . . f f f . . . . . . . . . . . 
+        f f f c c . . . . . . . . f f f 
+        f f c c . . c c . . . f c b b c 
+        f f c 3 c c 3 c c f f b b b c . 
+        f f b 3 b c 3 b c f b b c c c . 
+        . c b b b b b b c f b c b c c . 
+        . c b b b b b b c b b c b b c . 
+        c b 1 b b b 1 b b b c c c b c . 
+        c b b b b b b b b c c c c c . . 
+        f b c b b b c b b b b f c . . . 
+        f b 1 f f f 1 b b b b f c c . . 
+        . f b b b b b b b b c f . . . . 
+        . . f b b b b b b c f . . . . . 
+        . . . f f f f f f f . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Enemy)
+    animation.runImageAnimation(
+    Boss_Minion,
+    [img`
+        . . f f f . . . . . . . . f f f 
+        . f f c c . . . . . . f c b b c 
+        f f c c . . . . . . f c b b c . 
+        f c f c . . . . . . f b c c c . 
+        f f f c c . c c . f c b b c c . 
+        f f c 3 c c 3 c c f b c b b c . 
+        f f b 3 b c 3 b c f b c c b c . 
+        . c b b b b b b c b b c c c . . 
+        . c 1 b b b 1 b b c c c c . . . 
+        c b b b b b b b b b c c . . . . 
+        c b c b b b c b b b b f . . . . 
+        f b 1 f f f 1 b b b b f c . . . 
+        f b b b b b b b b b b f c c . . 
+        . f b b b b b b b b c f . . . . 
+        . . f b b b b b b c f . . . . . 
+        . . . f f f f f f f . . . . . . 
+        `,img`
+        . . f f f . . . . . . . . . . . 
+        f f f c c . . . . . . . . f f f 
+        f f c c . . c c . . . f c b b c 
+        f f c 3 c c 3 c c f f b b b c . 
+        f f b 3 b c 3 b c f b b c c c . 
+        . c b b b b b b c f b c b c c . 
+        . c b b b b b b c b b c b b c . 
+        c b 1 b b b 1 b b b c c c b c . 
+        c b b b b b b b b c c c c c . . 
+        f b c b b b c b b b b f c . . . 
+        f b 1 f f f 1 b b b b f c c . . 
+        . f b b b b b b b b c f . . . . 
+        . . f b b b b b b c f . . . . . 
+        . . . f f f f f f f . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . . . . . . . . . . . . . . . . 
+        . . c c . . c c . . . . . . . . 
+        . . c 3 c c 3 c c c . . . . . . 
+        . c b 3 b c 3 b c c c . . . . . 
+        . c b b b b b b b b f f . . . . 
+        c c b b b b b b b b f f . . . . 
+        c b 1 b b b 1 b b c f f f . . . 
+        c b b b b b b b b f f f f . . . 
+        f b c b b b c b c c b b b . . . 
+        f b 1 f f f 1 b f c c c c . . . 
+        . f b b b b b b f b b c c . . . 
+        c c f b b b b b c c b b c . . . 
+        c c c f f f f f f c c b b c . . 
+        . c c c . . . . . . c c c c c . 
+        . . c c c . . . . . . . c c c c 
+        . . . . . . . . . . . . . . . . 
+        `,img`
+        . f f f . . . . . . . . f f f . 
+        f f c . . . . . . . f c b b c . 
+        f c c . . . . . . f c b b c . . 
+        c f . . . . . . . f b c c c . . 
+        c f f . . . . . f f b b c c . . 
+        f f f c c . c c f b c b b c . . 
+        f f f c c c c c f b c c b c . . 
+        . f c 3 c c 3 b c b c c c . . . 
+        . c b 3 b c 3 b b c c c c . . . 
+        c c b b b b b b b b c c . . . . 
+        c b 1 b b b 1 b b b b f c . . . 
+        f b b b b b b b b b b f c c . . 
+        f b c b b b c b b b b f . . . . 
+        . f 1 f f f 1 b b b c f . . . . 
+        . . f b b b b b b c f . . . . . 
+        . . . f f f f f f f . . . . . . 
+        `],
+    100,
+    true
+    )
+    Boss_Minion.setPosition(Boss_1.x, Boss_1.y)
+    Boss_Minion.follow(Player_1, 50)
+    pause(10000)
+    Boss_Minion.destroy(effects.fire, 500)
 }
 sprites.onCreated(SpriteKind.Projectile, function (sprite) {
     Projectile_exists = 1
@@ -124,6 +222,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Boss, function (sprite, otherSpr
 })
 let Random_number_1 = 0
 let Projectile_exists = 0
+let Boss_Minion: Sprite = null
 let Projectile_bad_exists = 0
 let Boss_shot: Sprite = null
 let Player_shot: Sprite = null
@@ -192,7 +291,7 @@ forever(function () {
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Projectile)
         Player_shot.setPosition(Player_1.x, Player_1.y)
-        Player_shot.follow(Boss_1, 500)
+        Player_shot.follow(Boss_1, 1000)
         pause(200)
         Player_shot.destroy(effects.coolRadial, 500)
         pause(100)
@@ -238,15 +337,20 @@ forever(function () {
     pause(1000)
 })
 forever(function () {
-    pause(1000)
-    if (randint(1, 5) == 1) {
-        Random_number_1 = randint(1, 5)
-        if (Random_number_1 == 1 || Random_number_1 == 2) {
-            Boss_attack_1()
-        } else if (Random_number_1 == 3 || Random_number_1 == 4) {
-            Boss_attack_2()
-        } else {
-            Boss_attack_3()
-        }
+    if (Boss_life <= 0) {
+        Boss_life = 0
+        Player_1.say("I Win!!! :)", 1000)
+        Boss_1.say("Nooooooo! You Win! :(", 1000)
+    }
+})
+forever(function () {
+    pause(7500)
+    Random_number_1 = randint(1, 10)
+    if (Random_number_1 == 1 || Random_number_1 == 2 || (Random_number_1 == 3 || (Random_number_1 == 4 || Random_number_1 == 5))) {
+        Boss_attack_1()
+    } else if (Random_number_1 == 6 || Random_number_1 == 7 || (Random_number_1 == 8 || Random_number_1 == 9)) {
+        Boss_attack_2()
+    } else {
+        Boss_attack_3()
     }
 })
