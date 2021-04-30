@@ -65,7 +65,7 @@ function Boss_attack_2 () {
 }
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, otherSprite) {
     Boss_life += -1
-    Player_shot.destroy(effects.coolRadial, 500)
+    Player_shot.destroy()
 })
 function Boss_attack_1 () {
     Attack_happening = 1
@@ -107,7 +107,7 @@ sprites.onDestroyed(SpriteKind.Bad_projectile, function (sprite) {
 })
 function Boss_attack_3 () {
     Attack_happening = 1
-    for (let index = 0; index < 4; index++) {
+    for (let index = 0; index < 2; index++) {
     	
     }
     Attack_happening = 0
@@ -170,7 +170,7 @@ tiles.placeOnRandomTile(Boss_1, sprites.dungeon.collectibleInsignia)
 Boss_1.y += -30
 Boss_1.setVelocity(0, 30)
 pause(1000)
-Boss_1.follow(Player_1, 40)
+Boss_1.follow(Player_1, 30)
 forever(function () {
     if (controller.A.isPressed() && Projectile_exists == 0) {
         Player_shot = sprites.create(img`
@@ -192,8 +192,8 @@ forever(function () {
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Projectile)
         Player_shot.setPosition(Player_1.x, Player_1.y)
-        Player_shot.setVelocity(5 * (Boss_1.x - Player_1.x), 5 * (Boss_1.y - Player_1.y))
-        pause(100)
+        Player_shot.follow(Boss_1, 500)
+        pause(200)
         Player_shot.destroy(effects.coolRadial, 500)
         pause(100)
     }
