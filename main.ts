@@ -2,6 +2,27 @@ namespace SpriteKind {
     export const Boss = SpriteKind.create()
     export const Bar = SpriteKind.create()
     export const Bad_projectile = SpriteKind.create()
+    export const Utility = SpriteKind.create()
+}
+function Spawn_enemies () {
+    Enemy_1 = sprites.create(img`
+        . . f f f . . . . . . . . f f f 
+        . f f c c . . . . . . f c b b c 
+        f f c c . . . . . . f c b b c . 
+        f c f c . . . . . . f b c c c . 
+        f f f c c . c c . f c b b c c . 
+        f f c 3 c c 3 c c f b c b b c . 
+        f f b 3 b c 3 b c f b c c b c . 
+        . c b b b b b b c b b c c c . . 
+        . c 1 b b b 1 b b c c c c . . . 
+        c b b b b b b b b b c c . . . . 
+        c b c b b b c b b b b f . . . . 
+        f b 1 f f f 1 b b b b f c . . . 
+        f b b b b b b b b b b f c c . . 
+        . f b b b b b b b b c f . . . . 
+        . . f b b b b b b c f . . . . . 
+        . . . f f f f f f f . . . . . . 
+        `, SpriteKind.Enemy)
 }
 function Boss_attack_2 () {
     Attack_happening = 1
@@ -15,6 +36,45 @@ function Boss_attack_2 () {
     Boss_1.setVelocity(0, 0)
     Attack_happening = 0
 }
+sprites.onCreated(SpriteKind.Utility, function (sprite) {
+    while (!(Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.collectibleInsignia))) {
+        pause(10)
+    }
+    Boss_exists = 1
+    scene.cameraShake(8, 3000)
+    pause(3000)
+    Boss_1 = sprites.create(img`
+        ........................
+        ........................
+        ........................
+        ........................
+        ..........ffff..........
+        ........ff1111ff........
+        .......fb111111bf.......
+        .......f11111111f.......
+        ......fd11111111df......
+        ......fd11111111df......
+        ......fddd1111dddf......
+        ......fbdbfddfbdbf......
+        ......fcdcf11fcdcf......
+        .......fb111111bf.......
+        ......fffcdb1bdffff.....
+        ....fc111cbfbfc111cf....
+        ....f1b1b1ffff1b1b1f....
+        ....fbfbffffffbfbfbf....
+        .........ffffff.........
+        ...........fff..........
+        ........................
+        ........................
+        ........................
+        ........................
+        `, SpriteKind.Boss)
+    tiles.placeOnRandomTile(Boss_1, sprites.dungeon.collectibleInsignia)
+    Boss_1.y += -30
+    Boss_1.setVelocity(0, 30)
+    pause(1000)
+    Boss_1.follow(Player_1, 30)
+})
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Boss, function (sprite, otherSprite) {
     Boss_life += -1
     Player_shot.destroy()
@@ -177,10 +237,12 @@ let Boss_Minion: Sprite = null
 let Projectile_bad_exists = 0
 let Boss_shot: Sprite = null
 let Player_shot: Sprite = null
+let Boss_exists = 0
 let Player_y_for_aim = 0
 let Player_x_for_aim = 0
-let Attack_happening = 0
 let Boss_1: Sprite = null
+let Attack_happening = 0
+let Enemy_1: Sprite = null
 let Player_1: Sprite = null
 info.setLife(20)
 let Boss_life = 100
@@ -220,53 +282,37 @@ let Boss_life_bar = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Bar)
-controller.moveSprite(Player_1)
-controller.moveSprite(Boss_life_bar)
+controller.moveSprite(Player_1, 100, 100)
+controller.moveSprite(Boss_life_bar, 100, 100)
 tiles.setTilemap(tilemap`level1`)
 scene.cameraFollowSprite(Player_1)
-tiles.placeOnTile(Player_1, tiles.getTileLocation(8, 15))
+tiles.placeOnRandomTile(Player_1, sprites.castle.tileGrass2)
 Boss_life_bar.setPosition(Player_1.x, Player_1.y)
 Boss_life_bar.x += 60
 Boss_life_bar.y += -50
 Boss_life_bar.setStayInScreen(true)
-while (!(Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.collectibleInsignia))) {
-    pause(10)
-}
-let Boss_exists = 1
-scene.cameraShake(8, 3000)
-pause(3000)
-Boss_1 = sprites.create(img`
-    ........................
-    ........................
-    ........................
-    ........................
-    ..........ffff..........
-    ........ff1111ff........
-    .......fb111111bf.......
-    .......f11111111f.......
-    ......fd11111111df......
-    ......fd11111111df......
-    ......fddd1111dddf......
-    ......fbdbfddfbdbf......
-    ......fcdcf11fcdcf......
-    .......fb111111bf.......
-    ......fffcdb1bdffff.....
-    ....fc111cbfbfc111cf....
-    ....f1b1b1ffff1b1b1f....
-    ....fbfbffffffbfbfbf....
-    .........ffffff.........
-    ...........fff..........
-    ........................
-    ........................
-    ........................
-    ........................
-    `, SpriteKind.Boss)
-tiles.placeOnRandomTile(Boss_1, sprites.dungeon.collectibleInsignia)
-Boss_1.y += -30
-Boss_1.setVelocity(0, 30)
-pause(1000)
-Boss_1.follow(Player_1, 30)
+Spawn_enemies()
+let Start = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Utility)
 forever(function () {
+    Boss_life_bar.say(Boss_life, 1000)
+    Boss_life_bar.setPosition(Player_1.x + 60, Player_1.y - 50)
     if (controller.A.isPressed() && Projectile_exists == 0) {
         Player_shot = sprites.create(img`
             . . . . . . . . . . . . . . . . 
@@ -292,18 +338,21 @@ forever(function () {
         Player_shot.destroy(effects.coolRadial, 500)
         pause(100)
     }
-})
-forever(function () {
-    if (Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.hazardLava1) || Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.hazardLava0)) {
+    if (Boss_life <= 0) {
+        Boss_life = 0
+        Player_1.say("I Win!!! :)", 1000)
+        Boss_1.say("Nooooooo! You Win! :(", 1000)
+    }
+    if (Player_1.tileKindAt(TileDirection.Center, sprites.castle.tileDarkGrass1) || Player_1.tileKindAt(TileDirection.Center, sprites.castle.tileDarkGrass3)) {
+        controller.moveSprite(Player_1, 30, 30)
+        controller.moveSprite(Boss_life_bar, 30, 30)
+    } else if (Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.hazardLava1) || Player_1.tileKindAt(TileDirection.Center, sprites.dungeon.hazardLava0)) {
         info.changeLifeBy(-1)
         pause(500)
+    } else {
+        controller.moveSprite(Player_1, 100, 100)
+        controller.moveSprite(Boss_life_bar, 100, 100)
     }
-    Boss_life_bar.say(Boss_life, 500)
-})
-forever(function () {
-    Boss_life_bar.setPosition(Player_1.x + 60, Player_1.y - 50)
-})
-forever(function () {
     if (Attack_happening == 0) {
         Boss_shot = sprites.create(img`
             . . . . . . . . . . . . . . . . 
@@ -331,13 +380,6 @@ forever(function () {
         Boss_shot.destroy(effects.fire, 500)
     }
     pause(1000)
-})
-forever(function () {
-    if (Boss_life <= 0) {
-        Boss_life = 0
-        Player_1.say("I Win!!! :)", 1000)
-        Boss_1.say("Nooooooo! You Win! :(", 1000)
-    }
 })
 forever(function () {
     pause(7500)
